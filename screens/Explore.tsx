@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(29,26,28)", // Set background color
+    backgroundColor: "rgb(73,25,87)", // Set background color
     padding: 10,
   },
   profilePicture: {

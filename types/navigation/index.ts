@@ -18,11 +18,13 @@ export type RootStackParamList = {
   UserDetails1: undefined;
   UserDetails2: undefined;
   UserDetails3: undefined;
+  Message: undefined;
 };
 
 export type RootTabParamList = {
   Explore: undefined;
   Settings: undefined;
+  Messages: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =
