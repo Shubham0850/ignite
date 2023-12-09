@@ -49,12 +49,11 @@ contract ConnectionProfile {
     );
 
     function createUserProfile(
-        address _userAAaddress,
         string memory _cid,
         string memory _gender
     ) public {
         Profile memory newProfile = Profile({
-            userAAaddress: _userAAaddress,
+            userAAaddress: msg.sender,
             cid: _cid,
             gender: _gender,
             currentRequestForMatch: address(0),
@@ -65,7 +64,7 @@ contract ConnectionProfile {
             isConnectionPlusUser: false
         });
 
-        users[_userAAaddress] = newProfile;
+        users[msg.sender] = newProfile;
     }
 
     function getUserById(
@@ -107,6 +106,16 @@ contract ConnectionProfile {
         user.isVerified = true;
 
         emit NewVerifiedUser(_userAAaddress);
+    }
+
+    function setCustomAmount(uint256 amount) external payable {
+        Profile storage user = users[msg.sender];
+        require(
+            user.isConnectionPlusUser,
+            "only plus users can set custom values"
+        );
+
+        user.amount = amount;
     }
 
     function markUserAsConnectionPlus(address _userAAaddress) external payable {
