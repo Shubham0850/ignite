@@ -1,8 +1,9 @@
-import React from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import BottomTabNavigator from "./BottomTabNavigation";
-import LoginScreen from "../screens/LoginScreen"; // Import your LoginScreen component
-import { RootStackParamList } from "../types/navigation";
+import React from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import BottomTabNavigator from './BottomTabNavigation';
+import LoginScreen from '../screens/LoginScreen'; // Import your LoginScreen component
+import {RootStackParamList} from '../types/navigation';
+import Loader from '../screens/Loader';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -11,17 +12,16 @@ export default function StackNavigation() {
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: "black",
+          backgroundColor: 'black',
         },
       }}
-      initialRouteName={"Login"}
-    >
+      initialRouteName={'Loader'}>
       <Stack.Screen
         name="Login"
         component={LoginScreen}
         options={{
           headerShown: false,
-          animation: "default",
+          animation: 'default',
           gestureEnabled: false,
         }}
       />
@@ -30,7 +30,16 @@ export default function StackNavigation() {
         component={BottomTabNavigator}
         options={{
           headerShown: false,
-          animation: "default",
+          animation: 'default',
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="Loader"
+        component={Loader}
+        options={{
+          headerShown: false,
+          animation: 'default',
           gestureEnabled: false,
         }}
       />
