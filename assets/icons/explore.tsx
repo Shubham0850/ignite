@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Svg, {SvgProps, G, Path} from 'react-native-svg';
+import Svg, { SvgProps, G, Path } from 'react-native-svg';
 const Explore = (props: SvgProps) => (
   <Svg viewBox="0 0 24 24" fill="none" {...props}>
     <G id="SVGRepo_bgCarrier" strokeWidth={0} />
