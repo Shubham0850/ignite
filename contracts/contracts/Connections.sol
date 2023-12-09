@@ -9,16 +9,17 @@ contract Connections {
     using SafeERC20 for IERC20;
 
     struct Connection {
-        address intiator;
+        address initiator;
         address receiver;
         uint256 amountStaked;
-        bool connectionedEnded;
+        bool connectionEnded;
         uint256 lastElapsedTimestamp;
         address disconnectorAddress;
     }
 
     IERC20 public usdc;
-    constant BASE_USDC = '0xF175520C52418dfE19C8098071a252da48Cd1C19';
+
+    address constant BASE_USDC = 0xF175520C52418dfE19C8098071a252da48Cd1C19;
 
     address public owner;
 
@@ -58,17 +59,16 @@ contract Connections {
         newConnection.receiver = _receiver;
         newConnection.amountStaked = _amountStaked;
         newConnection.connectionEnded = false;
-        newConnection.lastElapsedTime = block.timestamp;
+        newConnection.lastElapsedTimestamp = block.timestamp;
         newConnection.disconnectorAddress = address(0);
 
-        usdc.safeTransferFrom(address(msg.sender), address(this), amountStaked);
-
-        emit NewConnection(
-            nextConnectionId,
-            msg.sender,
-            _receiver,
+        usdc.safeTransferFrom(
+            address(msg.sender),
+            address(this),
             _amountStaked
         );
+
+        emit NewConnection(connectionId, msg.sender, _receiver, _amountStaked);
 
         connectionIdCounter.increment();
     }
@@ -77,38 +77,63 @@ contract Connections {
         Connection storage connection = connections[_connectionId];
         uint256 daysDiff = (block.timestamp - connection.lastElapsedTimestamp);
 
-        if (disconnector == connection.intiator && daysDiff < 7 days) {
-            uint256 receiversShare = connection.amountStaked * 0.20;
-            usdc.safeTransferFrom(address(this), receiversShare);
+        if (disconnector == connection.initiator && daysDiff < 7 days) {
+            uint256 receiversShare = (connection.amountStaked * 20) / 100;
+            usdc.safeTransferFrom(
+                address(this),
+                connection.receiver,
+                receiversShare
+            );
         } else {
             if (daysDiff < 7 days) {
-                uint256 receiversShare = connection.amountStaked * 0.10;
-                uint256 initiatorShare = connection.amountStaked * 0.75;
+                uint256 receiversShare = (connection.amountStaked * 10) / 100;
+                uint256 initiatorShare = (connection.amountStaked * 75) / 100;
 
-                usdc.safeTransferFrom(address(this), receiversShare);
-                usdc.safeTransferFrom(address(this), initiatorShare);
-            } else if(daysDiff > 7 days && daysDiff < 14 days ) (
-                uint256 receiversShare = connection.amountStaked * 0.50;
-                uint256 initiatorShare = connection.amountStaked * 0.10;
+                usdc.safeTransferFrom(
+                    address(this),
+                    connection.receiver,
+                    receiversShare
+                );
+                usdc.safeTransferFrom(
+                    address(this),
+                    connection.initiator,
+                    initiatorShare
+                );
+            } else if (daysDiff > 7 days && daysDiff < 14 days) {
+                uint256 receiversShare = (connection.amountStaked * 50) / 100;
+                uint256 initiatorShare = (connection.amountStaked * 10) / 100;
 
-                usdc.safeTransferFrom(address(this), receiversShare);
-                usdc.safeTransferFrom(address(this), initiatorShare);
-            ) else {
-                uint256 receiversShare = connection.amountStaked * 0.60;
-                uint256 initiatorShare = connection.amountStaked * 0.10;
+                usdc.safeTransferFrom(
+                    address(this),
+                    connection.receiver,
+                    receiversShare
+                );
+                usdc.safeTransferFrom(
+                    address(this),
+                    connection.initiator,
+                    initiatorShare
+                );
+            } else {
+                uint256 receiversShare = (connection.amountStaked * 60) / 100;
+                uint256 initiatorShare = (connection.amountStaked * 10) / 100;
 
-                usdc.safeTransferFrom(address(this), receiversShare);
-                usdc.safeTransferFrom(address(this), initiatorShare);
+                usdc.safeTransferFrom(
+                    address(this),
+                    connection.receiver,
+                    receiversShare
+                );
+                usdc.safeTransferFrom(
+                    address(this),
+                    connection.initiator,
+                    initiatorShare
+                );
             }
-
         }
         connection.disconnectorAddress = disconnector;
         connection.connectionEnded = true;
     }
 
-    function restake(
-        uint256 _connectionId
-    ) external {
+    function restake(uint256 _connectionId) external {
         Connection storage connection = connections[_connectionId];
         connection.disconnectorAddress = address(0);
         connection.connectionEnded = false;
