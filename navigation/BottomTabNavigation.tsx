@@ -7,6 +7,7 @@ import CustomTabBar from '../components/bottombar';
 import Explore from '../assets/icons/explore';
 import Settings from '../assets/icons/settings';
 
+
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 export default function BottomTabNavigator() {
