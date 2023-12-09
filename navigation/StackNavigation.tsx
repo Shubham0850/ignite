@@ -5,6 +5,9 @@ import LoginScreen from "../screens/LoginScreen"; // Import your LoginScreen com
 import { RootStackParamList } from "../types/navigation";
 import Loader from "../screens/Loader";
 import { OnrampScreen } from "../screens/OnRamp";
+import UserDetails1 from "../screens/UserDetails1";
+import UserDetails2 from "../screens/UserDetails2";
+import UserDetails3 from "../screens/UserDetails3";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -48,6 +51,33 @@ export default function StackNavigation() {
       <Stack.Screen
         name="Onramp"
         component={OnrampScreen}
+        options={{
+          headerShown: false,
+          animation: "default",
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="UserDetails1"
+        component={UserDetails1}
+        options={{
+          headerShown: false,
+          animation: "default",
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="UserDetails2"
+        component={UserDetails2}
+        options={{
+          headerShown: false,
+          animation: "default",
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="UserDetails3"
+        component={UserDetails3}
         options={{
           headerShown: false,
           animation: "default",

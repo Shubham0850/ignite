@@ -12,20 +12,19 @@ import { useMagicSigner } from "../hooks/useMagicSigner";
 const LoginScreen = ({ navigation }: RootStackScreenProps<"Login">) => {
   const { magic } = useMagicSigner();
   const handleGetStarted = async () => {
-   try {
-    const accounts = await magic.wallet.connectWithUI();
-    console.log("this is accounts", accounts);
-    magic.wallet.connectWithUI().on("done", (params: any) => {
-      const {} = params;
-      // console.log(idToken, 'token created');
-      navigation.navigate("Root");
-      // send to your resource server for validation
-      // ...
-    });
-   } catch (error) {
-    console.log('heres the error: ', error);
-    
-   }
+    try {
+      const accounts = await magic.wallet.connectWithUI();
+      console.log("this is accounts", accounts);
+      magic.wallet.connectWithUI().on("done", (params: any) => {
+        const {} = params;
+        // console.log(idToken, 'token created');
+        navigation.navigate("UserDetails1");
+        // send to your resource server for validation
+        // ...
+      });
+    } catch (error) {
+      console.log("heres the error: ", error);
+    }
 
     // navigation.navigate('Root');
   };
