@@ -14,7 +14,7 @@ export default function StackNavigation() {
           backgroundColor: "black",
         },
       }}
-      initialRouteName={"Loader"}
+      initialRouteName={"Login"}
     >
       <Stack.Screen
         name="Login"
