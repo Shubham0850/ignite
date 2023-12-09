@@ -26,14 +26,16 @@ import {
 } from "react-native/Libraries/NewAppScreen";
 import Navigation from "./navigation";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useMagicSigner } from "./hooks/useMagicSigner";
 
 function App(): JSX.Element {
+  const { magic } = useMagicSigner();
   return (
     <SafeAreaProvider>
+      <magic.Relayer />
       <Navigation />
     </SafeAreaProvider>
   );
 }
-
 
 export default App;
