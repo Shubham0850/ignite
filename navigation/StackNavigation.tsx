@@ -4,6 +4,7 @@ import BottomTabNavigator from "./BottomTabNavigation";
 import LoginScreen from "../screens/LoginScreen"; // Import your LoginScreen component
 import { RootStackParamList } from "../types/navigation";
 import Loader from "../screens/Loader";
+import { OnrampScreen } from "../screens/OnRamp";
 import UserDetails1 from "../screens/UserDetails1";
 import UserDetails2 from "../screens/UserDetails2";
 import UserDetails3 from "../screens/UserDetails3";
@@ -42,6 +43,15 @@ export default function StackNavigation() {
       <Stack.Screen
         name="Loader"
         component={Loader}
+        options={{
+          headerShown: false,
+          animation: "default",
+          gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name="Onramp"
+        component={OnrampScreen}
         options={{
           headerShown: false,
           animation: "default",

@@ -11,6 +11,7 @@ import ChatUI from "../screens/Chat";
 import ChatIcon from "../assets/icons/chat";
 import Messages from "../screens/Messages";
 
+
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 export default function BottomTabNavigator() {

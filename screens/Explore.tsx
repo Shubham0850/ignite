@@ -46,6 +46,7 @@ const Explore: React.FC = () => {
 
   // Function to handle swiping right on a profile
   const handleStackMoney = () => {
+    navigation.navigate("Onramp")
     console.log(
       `STACK money - Liked profile with ID ${profiles[currentProfileIndex].id}`
     );
@@ -105,6 +106,7 @@ const Explore: React.FC = () => {
         </View>
       </View>
     </ScrollView>
+
   );
 };
 
@@ -173,4 +175,6 @@ const styles = StyleSheet.create({
   },
 });
 
+
 export default Explore;
+
