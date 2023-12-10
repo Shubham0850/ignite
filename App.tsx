@@ -28,13 +28,27 @@ import Navigation from "./navigation";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useMagicSigner } from "./hooks/useMagicSigner";
 
+import { WagmiConfig, createConfig } from "wagmi";
+import { createPublicClient, http } from "viem";
+import { chain } from "./config/client";
+
+const config = createConfig({
+  autoConnect: true,
+  publicClient: createPublicClient({
+    chain: chain,
+    transport: http(),
+  }),
+});
+
 function App(): JSX.Element {
   const { magic } = useMagicSigner();
   return (
-    <SafeAreaProvider>
-      <magic.Relayer />
-      <Navigation />
-    </SafeAreaProvider>
+    <WagmiConfig config={config}>
+      <SafeAreaProvider>
+        <magic.Relayer />
+        <Navigation />
+      </SafeAreaProvider>
+    </WagmiConfig>
   );
 }
 

@@ -31,6 +31,7 @@
     "react-native-webview": "^13.6.3",
     "text-encoding": "^0.7.0",
     "viem": "^1.19.11",
+    "wagmi": "^1.4.10",
     "zustand": "^4.4.7"
   },
   "devDependencies": {

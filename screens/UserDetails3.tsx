@@ -7,29 +7,46 @@ import {
   StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-interface LocationData {
-  country: string;
-  city: string;
-}
+import { IUserProfile, useStore } from "../store/userStore";
+import uploadMetadataToIPFS from "../utils/uploadMetadataToIPFS";
+import { ConnectionProfile } from "../config/client";
+import { encodeFunctionData } from "viem";
+import ABI from "../lib/ConnectionProfileABI.json";
+import { useAlchemyProvider } from "../hooks/useAlchemyProvider";
 
 const UserDetails3: React.FC = () => {
   const navigation = useNavigation();
-  const [locationData, setLocationData] = useState<LocationData>({
-    country: "",
-    city: "",
-  });
+  const { userProfile, setUserProfile } = useStore();
+  const { sendSponsoredUserOperation, provider } = useAlchemyProvider();
 
-  const handleInputChange = (key: keyof LocationData, value: string) => {
-    setLocationData((prevData) => ({
-      ...prevData,
-      [key]: value,
-    }));
+  const handleInputChange = (key: keyof IUserProfile, value: string) => {
+    setUserProfile(key, value);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     // Handle the submission of location data
-    console.log("Location data:", locationData);
+    console.log("Location data:", userProfile);
+    const stringifiedProfile = JSON.stringify(userProfile);
+    const cid = await uploadMetadataToIPFS(stringifiedProfile);
+
+    const userOpHash = await sendSponsoredUserOperation({
+      from: await provider.getAddress(),
+      to: ConnectionProfile,
+      data: encodeFunctionData({
+        abi: ABI,
+        functionName: "createUserProfile",
+        args: [cid, userProfile.gender],
+      }),
+    });
+
+    console.log("this is useroperation hash", userOpHash);
+
+    const transactionHash = await provider.waitForUserOperationTransaction(
+      userOpHash!
+    );
+
+    console.log("this is tx hash", transactionHash);
+
     // You can perform additional actions or navigate to the next screen
     navigation.navigate("Root");
   };
@@ -41,7 +58,7 @@ const UserDetails3: React.FC = () => {
         style={styles.input}
         placeholder="Country"
         placeholderTextColor="rgb(141,117,149)"
-        value={locationData.country}
+        value={userProfile.country}
         onChangeText={(text) => handleInputChange("country", text)}
       />
 
@@ -50,7 +67,7 @@ const UserDetails3: React.FC = () => {
         style={styles.input}
         placeholder="City"
         placeholderTextColor="rgb(141,117,149)"
-        value={locationData.city}
+        value={userProfile.city}
         onChangeText={(text) => handleInputChange("city", text)}
       />
 
