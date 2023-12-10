@@ -18,6 +18,12 @@ interface Profile {
   profilePicture: string;
   name: string;
   email: string;
+  age: number;
+  city: string;
+  country: string;
+  gender: string;
+  bio: string;
+  purpose: string;
 }
 
 const ProfileScreen: React.FC = () => {
@@ -26,6 +32,12 @@ const ProfileScreen: React.FC = () => {
     profilePicture: "https://placekitten.com/150/150",
     name: "John Doe",
     email: "john.doe@example.com",
+    age: 12,
+    bio: "",
+    city: "",
+    country: "",
+    gender: "Male",
+    purpose: "",
   });
 
   const { provider, sendSponsoredUserOperation } = useAlchemyProvider();
@@ -36,31 +48,6 @@ const ProfileScreen: React.FC = () => {
   );
   const [editedName, setEditedName] = useState(userProfile.name);
   const [editedEmail, setEditedEmail] = useState(userProfile.email);
-
-  const handleEditProfile = () => {
-    setIsEditing(true);
-  };
-
-  const handleSaveEdits = () => {
-    // Save the edited profile information
-    setUserProfile({
-      ...userProfile,
-      profilePicture: editedProfilePicture,
-      name: editedName,
-      email: editedEmail,
-    });
-
-    // Exit edit mode
-    setIsEditing(false);
-  };
-
-  const handleCancelEdits = () => {
-    // Reset the edited values and exit edit mode
-    setEditedProfilePicture(userProfile.profilePicture);
-    setEditedName(userProfile.name);
-    setEditedEmail(userProfile.email);
-    setIsEditing(false);
-  };
 
   const handleAddToWallet = () => {
     // Handle logic for adding USDC to wallet
@@ -75,7 +62,25 @@ const ProfileScreen: React.FC = () => {
     args: ["0x87fd69cd543592ebf27258ade38c35f0f6ce3a8c"],
   });
 
-  console.log("this is data", data);
+  if (data) {
+    fetch(`https://ipfs.io/ipfs/${data.cid}`).then((result) => {
+      result.json().then((profile) => {
+        console.log("this is user profile", profile);
+        setUserProfile({
+          ...userProfile,
+          name: profile.firstname,
+          profilePicture: profile.avatarCid,
+          age: profile.age,
+          bio: profile.bio,
+          city: profile.city,
+          gender: profile.gender,
+          purpose: profile.purpose,
+          country: profile.country,
+        });
+        // console.log(`https://ipfs.io/ipfs/${profile.avatarCid}`);
+      });
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -101,55 +106,24 @@ const ProfileScreen: React.FC = () => {
       </TouchableOpacity>
 
       <View style={styles.profileContainer}>
-        <TouchableOpacity onPress={handleEditProfile} disabled={isEditing}>
-          <Image
-            source={{ uri: editedProfilePicture }}
-            style={styles.profilePicture}
-          />
-        </TouchableOpacity>
-        {isEditing && (
-          <View style={styles.editContainer}>
-            <TextInput
-              style={styles.editInput}
-              value={editedProfilePicture}
-              onChangeText={setEditedProfilePicture}
-              placeholder="Edit Profile Picture URL"
-            />
-          </View>
-        )}
+        <Image
+          source={{
+            uri: userProfile.profilePicture
+              ? userProfile.profilePicture
+              : editedProfilePicture,
+          }}
+          style={styles.profilePicture}
+        />
       </View>
 
-      {isEditing ? (
-        <View style={styles.editContainer}>
-          <TextInput
-            style={styles.editInput}
-            value={editedName}
-            onChangeText={setEditedName}
-            placeholder="Edit Name"
-          />
-          <TextInput
-            style={styles.editInput}
-            value={editedEmail}
-            onChangeText={setEditedEmail}
-            placeholder="Edit Email"
-            keyboardType="email-address"
-          />
-          <TouchableOpacity style={styles.saveButton} onPress={handleSaveEdits}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={handleCancelEdits}
-          >
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.userName}>{userProfile.name}</Text>
-          <Text style={styles.userEmail}>{userProfile.email}</Text>
-        </View>
-      )}
+      <View style={styles.userInfoContainer}>
+        <Text style={styles.userName}>{userProfile.name}</Text>
+        <Text style={styles.userEmail}>{userProfile.email}</Text>
+        <Text style={styles.userName}>{userProfile.bio}</Text>
+        <Text style={styles.userEmail}>{userProfile.purpose}</Text>
+        <Text style={styles.userEmail}>{userProfile.gender}</Text>
+        <Text style={styles.userEmail}>{userProfile.city}</Text>
+      </View>
     </View>
   );
 };
