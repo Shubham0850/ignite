@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -22,4 +23,7 @@
         </intent-filter>
       </activity>
     </application>
+     <queries>
+        <package android:name="com.google.android.apps.nbu.paisa.user" />
+    </queries>
 </manifest>

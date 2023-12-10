@@ -1,10 +1,10 @@
-import {create} from 'zustand';
-import {Magic} from '@magic-sdk/react-native-bare';
-import {type SmartAccountSigner} from '@alchemy/aa-core';
-import {AlchemyProvider} from '@alchemy/aa-alchemy';
-import {alchemyApiKey, chain} from '../config/client';
+import { create } from "zustand";
+import { Magic } from "@magic-sdk/react-native-bare";
+import { type SmartAccountSigner } from "@alchemy/aa-core";
+import { AlchemyProvider } from "@alchemy/aa-alchemy";
+import { alchemyApiKey, chain } from "../config/client";
 
-export const useStore = create<IStore>(set => ({
+export const useStore = create<IStore>((set, get) => ({
   magicClient: null,
   magicSigner: null,
   isLoggedIn: false,
@@ -12,9 +12,20 @@ export const useStore = create<IStore>(set => ({
     chain,
     apiKey: alchemyApiKey,
   }),
-  userName: '',
-  ownerAddress: '',
-  ScaAddress: '',
+  userName: "",
+  ownerAddress: "",
+  ScaAddress: "",
+  userProfile: {
+    firstname: "",
+    lastname: "",
+    gender: "",
+    age: "",
+    avatarCid: "",
+    bio: "",
+    city: "",
+    country: "",
+    purpose: "",
+  },
   setMagicClient: (client: Magic) =>
     set({
       magicClient: client,
@@ -23,7 +34,7 @@ export const useStore = create<IStore>(set => ({
     set({
       magicSigner: signer,
     }),
-  setProvider: providerConnection =>
+  setProvider: (providerConnection) =>
     set({
       provider: providerConnection,
     }),
@@ -43,7 +54,26 @@ export const useStore = create<IStore>(set => ({
     set({
       ownerAddress: address,
     }),
+  setUserProfile: (key: any, value: string) =>
+    set({
+      userProfile: {
+        ...get().userProfile,
+        [key]: value,
+      },
+    }),
 }));
+
+export type IUserProfile = {
+  firstname: string;
+  lastname: string;
+  gender: string;
+  age: string;
+  avatarCid: string;
+  bio: string;
+  city: string;
+  country: string;
+  purpose: string;
+};
 
 export type IStore = {
   magicClient: Magic | null;
@@ -53,6 +83,7 @@ export type IStore = {
   provider: AlchemyProvider;
   isLoggedIn: boolean;
   userName: string;
+  userProfile: IUserProfile;
   setIsLoggedIn: (value: boolean) => void;
   setProvider: (provider: AlchemyProvider) => void;
   setMagicClient: (client: Magic) => void;
@@ -60,4 +91,5 @@ export type IStore = {
   setUserName: (username: string) => void;
   setOwnerAddress: (address: string) => void;
   setScaAddress: (address: string) => void;
+  setUserProfile: (key: any, value: string) => void;
 };
