@@ -7,33 +7,19 @@ import {
   StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
-interface ProfileData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  age: string;
-}
+import { IUserProfile, useStore } from "../store/userStore";
 
 const UserDetails1: React.FC = () => {
-  const [profileData, setProfileData] = useState<ProfileData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    age: "",
-  });
+  const { userProfile, setUserProfile } = useStore();
   const navigation = useNavigation();
 
-  const handleInputChange = (key: keyof ProfileData, value: string) => {
-    setProfileData((prevData) => ({
-      ...prevData,
-      [key]: value,
-    }));
+  const handleInputChange = (key: keyof IUserProfile, value: string) => {
+    setUserProfile(key, value);
   };
 
   const handleNext = () => {
     // Add validation logic if needed
-    console.log("Profile created:", profileData);
+    console.log("Profile created:", userProfile);
     // Navigate to the next screen or perform other actions
     navigation.navigate("UserDetails2");
   };
@@ -47,27 +33,26 @@ const UserDetails1: React.FC = () => {
             style={styles.nameInput}
             placeholder="First Name"
             placeholderTextColor="rgb(141,117,149)"
-            value={profileData.firstName}
-            onChangeText={(text) => handleInputChange("firstName", text)}
+            value={userProfile.firstname}
+            onChangeText={(text) => handleInputChange("firstname", text)}
           />
           <TextInput
             style={styles.nameInput}
             placeholder="Last Name"
             placeholderTextColor="rgb(141,117,149)"
-            value={profileData.lastName}
-            onChangeText={(text) => handleInputChange("lastName", text)}
+            value={userProfile.lastname}
+            onChangeText={(text) => handleInputChange("lastname", text)}
           />
         </View>
       </View>
 
-      <Text style={styles.label}>Enter your email</Text>
+      <Text style={styles.label}>Enter your Gender</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="Gender"
         placeholderTextColor="rgb(141,117,149)"
-        value={profileData.email}
-        onChangeText={(text) => handleInputChange("email", text)}
-        keyboardType="email-address"
+        value={userProfile.gender}
+        onChangeText={(text) => handleInputChange("gender", text)}
       />
 
       <Text style={styles.label}>How old are you?</Text>
@@ -75,7 +60,7 @@ const UserDetails1: React.FC = () => {
         style={styles.input}
         placeholder="Age"
         placeholderTextColor="rgb(141,117,149)"
-        value={profileData.age}
+        value={userProfile.age}
         onChangeText={(text) => handleInputChange("age", text)}
         keyboardType="numeric"
       />

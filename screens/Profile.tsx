@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,11 @@ import {
   StyleSheet,
   TextInput,
 } from "react-native";
+import { useContractRead } from "wagmi";
+import ABI from "../lib/ConnectionProfileABI.json";
+import { useAlchemyProvider } from "../hooks/useAlchemyProvider";
+import { ConnectionProfile, chain } from "../config/client";
+import { createPublicClient, encodeFunctionData, http } from "viem";
 
 interface Profile {
   id: number;
@@ -22,6 +27,8 @@ const ProfileScreen: React.FC = () => {
     name: "John Doe",
     email: "john.doe@example.com",
   });
+
+  const { provider, sendSponsoredUserOperation } = useAlchemyProvider();
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfilePicture, setEditedProfilePicture] = useState(
@@ -60,6 +67,15 @@ const ProfileScreen: React.FC = () => {
     // For now, let's just log a message
     console.log("USDC added to wallet!");
   };
+
+  const { data, isError, isLoading } = useContractRead({
+    address: "0x8dEb80c6E770333A819E792e844bcCD02b3DAdc8",
+    abi: ABI,
+    functionName: "getUserById",
+    args: ["0x87fd69cd543592ebf27258ade38c35f0f6ce3a8c"],
+  });
+
+  console.log("this is data", data);
 
   return (
     <View style={styles.container}>

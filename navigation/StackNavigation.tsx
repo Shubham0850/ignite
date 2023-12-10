@@ -7,7 +7,7 @@ import Loader from "../screens/Loader";
 import UserDetails1 from "../screens/UserDetails1";
 import UserDetails2 from "../screens/UserDetails2";
 import UserDetails3 from "../screens/UserDetails3";
-import ChatUI from '../screens/Chat';
+import ChatUI from "../screens/Chat";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -80,7 +80,7 @@ export default function StackNavigation() {
         component={ChatUI}
         options={{
           headerShown: false,
-          animation: 'default',
+          animation: "default",
           gestureEnabled: false,
         }}
       />

@@ -7,57 +7,46 @@ import {
   Image,
   StyleSheet,
 } from "react-native";
-import ImagePicker from "react-native-image-picker";
+import ImagePicker, { launchImageLibrary } from "react-native-image-picker";
 import { useNavigation } from "@react-navigation/native";
-
-interface AdditionalDetails {
-  profilePicture: string | null;
-  description: string;
-  designation: string;
-}
+import uploadImageToIPFS from "../utils/uploadImageToIPFS";
+import { IUserProfile, useStore } from "../store/userStore";
 
 const UserDetails2: React.FC = () => {
   const navigation = useNavigation();
+  const { userProfile, setUserProfile } = useStore();
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>(
-    {
-      profilePicture: null,
-      description: "",
-      designation: "",
-    }
-  );
 
-  const handleInputChange = (key: keyof AdditionalDetails, value: string) => {
-    setAdditionalDetails((prevData) => ({
-      ...prevData,
-      [key]: value,
-    }));
+  const handleInputChange = (key: keyof IUserProfile, value: string) => {
+    setUserProfile(key, value);
   };
 
   const handleChooseImage = () => {
-    ImagePicker.showImagePicker(
-      {
-        title: "Select Image",
-        storageOptions: {
-          skipBackup: true,
-          path: "images",
-        },
-      },
-      (response) => {
-        if (response.didCancel) {
-          console.log("User cancelled image picker");
-        } else if (response.error) {
-          console.log("ImagePicker Error: ", response.error);
-        } else if (response.uri) {
-          setImageUri(response.uri);
-        }
+    const options = {
+      mediaType: "photo",
+      includeBase64: false,
+      maxHeight: 2000,
+      maxWidth: 2000,
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled image picker");
+      } else if (response.error) {
+        console.log("Image picker error: ", response.error);
+      } else {
+        let imageUri = response.uri || response.assets?.[0]?.uri;
+
+        uploadImageToIPFS(imageUri).then((cid) => {
+          setUserProfile("avatarCid", `https://ipfs.io/ipfs/${cid}`);
+        });
       }
-    );
+    });
   };
 
   const handleNext = () => {
     // Handle the submission of additional details
-    console.log("Additional details:", additionalDetails);
+    console.log("Additional details:", userProfile);
     // You can perform additional actions or navigate to the next screen
     navigation.navigate("UserDetails3");
   };
@@ -65,14 +54,14 @@ const UserDetails2: React.FC = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={handleChooseImage}>
-        {additionalDetails.profilePicture ? (
+        {userProfile.avatarCid ? (
           <Image
-            source={{ uri: additionalDetails.profilePicture }}
+            source={{ uri: userProfile.avatarCid }}
             style={styles.profilePicture}
           />
         ) : (
           <View style={styles.placeholderContainer}>
-            <Text style={styles.label}>Choose Profile Picture</Text>
+            <Text style={styles.imageLabel}>Choose Profile Picture</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -82,19 +71,19 @@ const UserDetails2: React.FC = () => {
         style={styles.inputForDescription}
         placeholder="Description"
         placeholderTextColor="rgb(141,117,149)"
-        value={additionalDetails.description}
-        onChangeText={(text) => handleInputChange("description", text)}
+        value={userProfile.bio}
+        onChangeText={(text) => handleInputChange("bio", text)}
         multiline={true} // Allow multiline input
         numberOfLines={4} // Set the number of lines you want to show initially
       />
 
-      <Text style={styles.label}>Enter your designation</Text>
+      <Text style={styles.label}>Share your purpose</Text>
       <TextInput
         style={styles.inputForDesignation}
         placeholder="Designation"
         placeholderTextColor="rgb(141,117,149)"
-        value={additionalDetails.designation}
-        onChangeText={(text) => handleInputChange("designation", text)}
+        value={userProfile.purpose}
+        onChangeText={(text) => handleInputChange("purpose", text)}
       />
 
       <TouchableOpacity style={styles.nextButtonContainer} onPress={handleNext}>
@@ -103,7 +92,6 @@ const UserDetails2: React.FC = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -113,6 +101,12 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 20,
+    marginBottom: 5,
+    color: "rgb(197,181,201)",
+    zIndex: 2,
+  },
+  imageLabel: {
+    fontSize: 16,
     marginBottom: 5,
     color: "rgb(197,181,201)",
     zIndex: 2,

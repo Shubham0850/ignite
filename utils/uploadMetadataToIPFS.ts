@@ -6,7 +6,7 @@
 
 import { IPFS_UPLOAD_API, WEB3STORAGETOKEN } from "../config/client";
 
-const uploadImageToIPFS = async (metadata: string): Promise<string> => {
+const uploadMetadataToIPFS = async (metadata: string): Promise<string> => {
   try {
     const headersList = {
       Authorization: `Bearer ${WEB3STORAGETOKEN}`,
@@ -14,15 +14,10 @@ const uploadImageToIPFS = async (metadata: string): Promise<string> => {
 
     console.log("metadata", metadata);
 
-    const response = await fetch(metadata);
-    const blob = await response.blob();
-
-    console.log("blob:", blob);
-
     const filehash = await fetch(IPFS_UPLOAD_API, {
       method: "POST",
       headers: headersList,
-      body: blob,
+      body: metadata,
     });
     const data = await filehash.json();
     console.log("this is data", data.cid);
@@ -35,4 +30,4 @@ const uploadImageToIPFS = async (metadata: string): Promise<string> => {
     throw new Error("Something went wrong");
   }
 };
-export default uploadImageToIPFS;
+export default uploadMetadataToIPFS;

@@ -8,16 +8,30 @@ import {
 } from "react-native";
 import { RootStackScreenProps } from "../types/navigation";
 import { useMagicSigner } from "../hooks/useMagicSigner";
+import { useAlchemyProvider } from "../hooks/useAlchemyProvider";
+import { useStore } from "../store/userStore";
 
 const LoginScreen = ({ navigation }: RootStackScreenProps<"Login">) => {
-  const { magic } = useMagicSigner();
+  const { magic, signer } = useMagicSigner();
+  const { connectProviderToAccount } = useAlchemyProvider();
+  const { setOwnerAddress, setScaAddress, setUserName } = useStore();
   const handleGetStarted = async () => {
     try {
       const accounts = await magic.wallet.connectWithUI();
       console.log("this is accounts", accounts);
-      magic.wallet.connectWithUI().on("done", (params: any) => {
+      magic.wallet.connectWithUI().on("done", async (params: any) => {
         const {} = params;
         // console.log(idToken, 'token created');
+        const provider = connectProviderToAccount(signer);
+        magic.user.getInfo().then((data) => {
+          setUserName(data.email!);
+          setOwnerAddress(data.publicAddress!);
+        });
+        console.log(
+          "connected provider with the signer and created smaart account",
+          await provider.getAddress()
+        );
+        setScaAddress(await provider.getAddress());
         navigation.navigate("UserDetails1");
         // send to your resource server for validation
         // ...
